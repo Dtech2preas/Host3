@@ -6,7 +6,7 @@ import retrofit2.http.Url
 import okhttp3.ResponseBody
 
 interface IptvOrgApi {
-    @GET("https://iptv-org.github.io/api/countries.json")
+    @GET("api/countries.json")
     suspend fun getCountries(): List<CountryDto>
 
     @GET

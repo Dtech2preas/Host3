@@ -34,7 +34,7 @@ class ChannelRepositoryImpl(
 
     override suspend fun syncChannels(countryCode: String) {
         withContext(Dispatchers.IO) {
-            val url = "https://iptv-org.github.io/iptv/countries/\$countryCode.m3u"
+            val url = "https://iptv-org.github.io/iptv/countries/$countryCode.m3u"
             try {
                 val responseBody = api.downloadPlaylist(url)
                 val channels = M3uParser.parse(responseBody.byteStream(), countryCode)
