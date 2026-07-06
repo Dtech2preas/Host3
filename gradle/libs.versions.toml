@@ -85,6 +85,8 @@ androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime
 
 androidx-foundation = { group = "androidx.compose.foundation", name = "foundation" }
 
+androidx-datastore = { group = "androidx.datastore", name = "datastore-preferences", version = "1.1.1" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }

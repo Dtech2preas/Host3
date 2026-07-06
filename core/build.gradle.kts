@@ -33,4 +33,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.coil.compose)
+    implementation(libs.androidx.datastore)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
 }
