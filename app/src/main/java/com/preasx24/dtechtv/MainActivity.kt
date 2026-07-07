@@ -25,6 +25,7 @@ import com.preasx24.dtechtv.core.ui.theme.DTechTvTheme
 import com.preasx24.dtechtv.mobileui.home.HomeScreen
 import com.preasx24.dtechtv.mobileui.onboarding.OnboardingScreen
 import com.preasx24.dtechtv.mobileui.player.PlayerScreen
+import com.preasx24.dtechtv.mobileui.logs.LogConsoleScreen
 import com.preasx24.dtechtv.tvui.TvHomeScreen
 import dagger.hilt.android.AndroidEntryPoint
 import java.net.URLEncoder
@@ -85,9 +86,14 @@ fun MobileAppNavigation(startDestination: String) {
                 onChannelSelected = { channel ->
                     val encodedUrl = URLEncoder.encode(channel.streamUrl, StandardCharsets.UTF_8.toString())
                     navController.navigate("player/$encodedUrl")
-                    navController.navigate("player/\$encodedUrl")
+                },
+                onNavigateToLogs = {
+                    navController.navigate("logs")
                 }
             )
+        }
+        composable("logs") {
+            LogConsoleScreen(onBack = { navController.popBackStack() })
         }
         composable(
             route = "player/{streamUrl}",

@@ -1,5 +1,6 @@
 package com.preasx24.dtechtv.data.repository
 
+import com.preasx24.dtechtv.core.logger.AppLogger
 import com.preasx24.dtechtv.database.dao.ChannelDao
 import com.preasx24.dtechtv.database.entity.ChannelEntity
 import com.preasx24.dtechtv.domain.model.Channel
@@ -13,7 +14,8 @@ import kotlinx.coroutines.withContext
 
 class ChannelRepositoryImpl(
     private val channelDao: ChannelDao,
-    private val api: IptvOrgApi
+    private val api: IptvOrgApi,
+    private val appLogger: AppLogger
 ) : ChannelRepository {
 
     override fun getChannels(): Flow<List<Channel>> {
@@ -35,9 +37,14 @@ class ChannelRepositoryImpl(
     override suspend fun syncChannels(countryCode: String) {
         withContext(Dispatchers.IO) {
             val url = "https://iptv-org.github.io/iptv/countries/$countryCode.m3u"
+            appLogger.log("SyncChannels: Starting sync for country $countryCode using URL $url")
             try {
+                appLogger.log("SyncChannels: Downloading playlist...")
                 val responseBody = api.downloadPlaylist(url)
+
+                appLogger.log("SyncChannels: Parsing M3U content...")
                 val channels = M3uParser.parse(responseBody.byteStream(), countryCode)
+                appLogger.log("SyncChannels: Parsed ${channels.size} channels successfully.")
 
                 val entities = channels.map {
                     ChannelEntity(
@@ -52,15 +59,17 @@ class ChannelRepositoryImpl(
                     )
                 }
 
-                // For a robust sync, we might want to keep favorites.
-                // Room REPLACE strategy handles conflicts, but overwrites fields.
-                // A better approach is an UPSERT, but for MVP, REPLACE is fine.
+                appLogger.log("SyncChannels: Deleting old channels for $countryCode...")
                 channelDao.deleteChannelsByCountry(countryCode)
+
+                appLogger.log("SyncChannels: Inserting ${entities.size} new channels into database...")
                 channelDao.insertChannels(entities)
+                appLogger.log("SyncChannels: Sync completed successfully.")
 
             } catch (e: Exception) {
-                // Log error or rethrow
+                appLogger.log("SyncChannels: Exception during sync - ${e.message}")
                 e.printStackTrace()
+                throw e
             }
         }
     }

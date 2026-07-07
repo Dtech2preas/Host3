@@ -10,6 +10,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -22,6 +26,7 @@ import com.preasx24.dtechtv.domain.model.Channel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    onNavigateToLogs: () -> Unit,
     onChannelSelected: (Channel) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -29,7 +34,14 @@ fun HomeScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("D-TECH TV") })
+            TopAppBar(
+                title = { Text("D-TECH TV") },
+                actions = {
+                    IconButton(onClick = onNavigateToLogs) {
+                        Icon(Icons.Default.Info, contentDescription = "Logs")
+                    }
+                }
+            )
         }
     ) { padding ->
         if (channels.isEmpty()) {
